@@ -30,20 +30,79 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     *  Need to be implemented.
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-        List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
-        return new Path(graph, arcs);
+    	
+    	Path path;
+    	
+    	if(nodes.size() >= 2) {
+            List<Arc> arcs = new ArrayList<Arc>();
+	        for(int i = 0; i < nodes.size()-1; i++) {
+	        	Arc fastestPath = Path.getFastestPath(nodes.get(i), nodes.get(i+1));
+	        	
+	        	if(fastestPath == null)
+	        		throw new IllegalArgumentException("list of nodes is not valid");
+	        	
+	        	arcs.add(fastestPath);        	
+	        }
+	        path = new Path(graph, arcs);
+    	} else if (nodes.size() == 1){
+    		path = new Path(graph, nodes.get(0));
+    	} else {
+    		path = new Path(graph);
+    	}
+    	
+    	return path;
     }
+    
+    
+    private static Arc getFastestPath(Node origin, Node destination) {
+    	double minPathTravelTime = Double.MAX_VALUE;
+		Arc minPathArc = null;
+		
+    	for(int j = 0; j < origin.getNumberOfSuccessors(); j++) {
+    		Arc curDest = origin.getSuccessors().get(j);
+    		
+    		// si les deux noeuds sont bien relies
+    		if(curDest.getDestination().equals(destination)) {
+    			if(minPathTravelTime > curDest.getMinimumTravelTime()) {
+        			minPathArc = origin.getSuccessors().get(j);
+        			minPathTravelTime = curDest.getMinimumTravelTime();
+    			}       			
+    		}
+    	}
+    	
+    	return minPathArc;
+    	
+    }
+    
+    
 
     /**
      * Create a new path that goes through the given list of nodes (in order),
      * choosing the shortest route if multiple are available.
      * 
-     * @param graph Graph containing the nodes in the list.
+     * @param graph Graph containing the no    private static Arc getShortestPath(Node origin, Node destination) {
+    	float minPathLength = Float.MAX_VALUE;
+		Arc minPathArc = null;
+		
+    	for(int j = 0; j < origin.getNumberOfSuccessors(); j++) {
+    		Arc curDest = origin.getSuccessors().get(j);
+    		
+    		// si les deux noeuds sont bien relies
+    		if(curDest.getDestination().equals(destination)) {
+    			if(minPathLength > curDest.getLength()) {
+        			minPathArc = origin.getSuccessors().get(j);
+        			minPathLength = curDest.getLength();
+    			}       			
+    		}
+    	}
+    	
+    	return minPathArc;
+    	
+    }des in the list.
      * @param nodes List of nodes to build the path.
      * 
      * @return A path that goes through the given list of nodes.
