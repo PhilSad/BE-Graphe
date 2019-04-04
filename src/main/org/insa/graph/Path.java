@@ -54,18 +54,26 @@ public class Path {
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-        List<Arc> arcs = new ArrayList<Arc>();
-        
-        for(int i = 0; i < nodes.size()-1; i++) {
-        	Arc shortestPath = Path.getShortestPath(nodes.get(i), nodes.get(i+1));
-        	
-        	if(shortestPath == null)
-        		throw new IllegalArgumentException("list of nodes is not valid");
-        	
-        	arcs.add(shortestPath);        	
-        }
-        
-        return new Path(graph, arcs);
+    	Path path;
+    	
+    	if(nodes.size() >= 2) {
+            List<Arc> arcs = new ArrayList<Arc>();
+	        for(int i = 0; i < nodes.size()-1; i++) {
+	        	Arc shortestPath = Path.getShortestPath(nodes.get(i), nodes.get(i+1));
+	        	
+	        	if(shortestPath == null)
+	        		throw new IllegalArgumentException("list of nodes is not valid");
+	        	
+	        	arcs.add(shortestPath);        	
+	        }
+	        path = new Path(graph, arcs);
+    	} else if (nodes.size() == 1){
+    		path = new Path(graph, nodes.get(0));
+    	} else {
+    		path = new Path(graph);
+    	}
+    	
+    	return path;
     }
     
     private static Arc getShortestPath(Node origin, Node destination) {
@@ -74,6 +82,7 @@ public class Path {
 		
     	for(int j = 0; j < origin.getNumberOfSuccessors(); j++) {
     		Arc curDest = origin.getSuccessors().get(j);
+    		
     		// si les deux noeuds sont bien relies
     		if(curDest.getDestination().equals(destination)) {
     			if(minPathLength > curDest.getLength()) {
