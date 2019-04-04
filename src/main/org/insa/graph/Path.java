@@ -64,7 +64,7 @@ public class Path {
 	        	if(shortestPath == null)
 	        		throw new IllegalArgumentException("list of nodes is not valid");
 	        	
-	        	arcs.add(shortestPath);        	
+	        	arcs.add(shortestPath);
 	        }
 	        path = new Path(graph, arcs);
     	} else if (nodes.size() == 1){
