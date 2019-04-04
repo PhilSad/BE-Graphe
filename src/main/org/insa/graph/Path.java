@@ -56,25 +56,35 @@ public class Path {
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
         
-        
         for(int i = 0; i < nodes.size()-1; i++) {
-        	Node currentNode = nodes.get(i);
+        	Arc shortestPath = Path.getShortestPath(nodes.get(i), nodes.get(i+1));
         	
-        	for(int j = 0; j < graph.size(); i++) {
-        		Node graphNode = graph.getNodes().get(j);
-                if(currentNode.equals(graphNode)) {
-                	float minPath = Float.MAX_VALUE;
-                	float minPathNode;
-                	for(int k = 0; k < graphNode.getNumberOfSuccessors(); k++) {
-                		graphNode.getSuccessors().get(k);
-                	}
-                }
-        	}
+        	if(shortestPath == null)
+        		throw new IllegalArgumentException("list of nodes is not valid");
         	
-        	arcs.add(Node.linkNodes(nodes.get(i), nodes.get(i+1), length, roadInformation, points));
+        	arcs.add(shortestPath);        	
         }
         
         return new Path(graph, arcs);
+    }
+    
+    private static Arc getShortestPath(Node origin, Node destination) {
+    	float minPathLength = Float.MAX_VALUE;
+		Arc minPathArc = null;
+		
+    	for(int j = 0; j < origin.getNumberOfSuccessors(); j++) {
+    		Arc curDest = origin.getSuccessors().get(j);
+    		// si les deux noeuds sont bien relies
+    		if(curDest.getDestination().equals(destination)) {
+    			if(minPathLength > curDest.getLength()) {
+        			minPathArc = origin.getSuccessors().get(j);
+        			minPathLength = curDest.getLength();
+    			}       			
+    		}
+    	}
+    	
+    	return minPathArc;
+    	
     }
 
     /**
