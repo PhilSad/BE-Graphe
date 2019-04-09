@@ -1,11 +1,15 @@
 package org.insa.algo.shortestpath;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.insa.algo.AbstractSolution.Status;
 import org.insa.algo.utils.BinaryHeap;
 import org.insa.algo.utils.Label;
 import org.insa.graph.Arc;
 import org.insa.graph.Node;
+import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
@@ -23,16 +27,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Node origin = data.getOrigin();
         
-        for(Node node : nodes) {
-        	Label.addLabel(node); // on crée des labels pour chaque noeud
+        for(Node node : nodes) { // on crée des labels pour chaque noeud
+        	Label.addLabel(node);
+        	//TODO creer le label seulement quand on l'utilise
         }
         
         Label originLabel = Label.getLabel(origin.getId());
         originLabel.setCost(0.0);
         tas.insert(originLabel);
         
-        while(Label.unmarkedNodeExist()) {
-        	Label x = tas.findMin();
+        /* Algorithme de Dijkstra */
+        while(!tas.isEmpty()) {
+        	Label x = tas.deleteMin();
         	x.setMarque(true);
         	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
@@ -40,15 +46,35 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		if(!y.isMarque()) {
         			Double newCost = Math.min(y.getCost(), x.getCost() + a.getLength());
         			if(newCost != y.getCost()) {
+        				if(y.getCost() == Double.MAX_VALUE) //rajoute dans le tas si on n'a pas touché sa valeur
+        					tas.insert(y);
+        					
+        				
         				y.setCost(newCost);
         				y.setPere(x.getSommetCourant());
-        				tas.insert(y);
         			}        			
         		}
         	}
         }
         
-        Node destination = data.getDestination();        
+        /* Crée le path*/
+        
+        Node destination = data.getDestination();     
+        
+        List<Node> pathNodes = new ArrayList<Node>();
+        
+        Label curNode = Label.getLabel(destination.getId());
+        do {
+        	pathNodes.add(curNode.getSommetCourant());
+        	curNode = Label.getLabel(curNode.getPere().getId());
+        }while(!curNode.getSommetCourant().equals(origin));
+        
+        pathNodes.add(origin);
+        Collections.reverse(pathNodes);
+        
+        Path path = Path.createShortestPathFromNodes(data.getGraph(), pathNodes);
+        
+        solution = new ShortestPathSolution(data, Status.FEASIBLE, path);
         
         return solution;
     }
