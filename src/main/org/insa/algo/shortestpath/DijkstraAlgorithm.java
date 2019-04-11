@@ -29,7 +29,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         for(Node node : nodes) { // on crée des labels pour chaque noeud
         	Label.addLabel(node);
-        	//TODO creer le label seulement quand on l'utilise
         }
         
         Label originLabel = Label.getLabel(origin.getId());
@@ -40,15 +39,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         while(!tas.isEmpty()) {
         	Label x = tas.deleteMin();
         	x.setMarque(true);
-        	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
+        		
+        		// Small test to check allowed roads...
+                if (!data.isAllowed(a)) {
+                	
+                	continue;
+                }
+        		
         		Label y = Label.getLabel(a.getDestination().getId());
         		if(!y.isMarque()) {
         			Double newCost = Math.min(y.getCost(), x.getCost() + a.getLength());
         			if(newCost != y.getCost()) {
         				if(y.getCost() == Double.MAX_VALUE) //rajoute dans le tas si on n'a pas touché sa valeur
-        					tas.insert(y);
-        					
+        					tas.insert(y);        					
         				
         				y.setCost(newCost);
         				y.setPere(x.getSommetCourant());
