@@ -44,12 +44,16 @@ public class ShortestPathTest {
         // Add arcs...
         a2b = Node.linkNodes(nodes[0], nodes[1], 7, null, null);
         a2c = Node.linkNodes(nodes[0], nodes[2], 8, null, null);
-        b2d = Node.linkNodes(nodes[1], nodes[3], 8, null, null);
-                
-        e2d = Node.linkNodes(nodes[4], nodes[3], 2, null, null);
-        e2f = Node.linkNodes(nodes[4], nodes[5], 3, null, null);
-        e2c = Node.linkNodes(nodes[4], nodes[2], 2, null, null);
-        f2e = Node.linkNodes(nodes[5], nodes[4], 3, null, null);
+        b2d = Node.linkNodes(nodes[1], nodes[3], 4, null, null);
+        b2e = Node.linkNodes(nodes[1], nodes[4], 1, null, null);
+        b2f = Node.linkNodes(nodes[1], nodes[5], 5, null, null);
+        c2a = Node.linkNodes(nodes[2], nodes[0], 7, null, null);
+        c2b = Node.linkNodes(nodes[2], nodes[1], 2, null, null);
+        c2f = Node.linkNodes(nodes[2], nodes[5], 2, null, null);
+		e2d = Node.linkNodes(nodes[4], nodes[3], 2, null, null);
+		e2f = Node.linkNodes(nodes[4], nodes[5], 3, null, null);
+		e2c = Node.linkNodes(nodes[4], nodes[2], 2, null, null);
+		f2e = Node.linkNodes(nodes[5], nodes[4], 3, null, null);
 
         graph = new Graph("ID", "", Arrays.asList(nodes), null);
 
