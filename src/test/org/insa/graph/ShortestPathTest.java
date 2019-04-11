@@ -45,16 +45,11 @@ public class ShortestPathTest {
         a2b = Node.linkNodes(nodes[0], nodes[1], 7, null, null);
         a2c = Node.linkNodes(nodes[0], nodes[2], 8, null, null);
         b2d = Node.linkNodes(nodes[1], nodes[3], 8, null, null);
-        
-        
-        b2d = Node.linkNodes(nodes[0], nodes[3], 15, speed20, null);
-        b2c = Node.linkNodes(nodes[1], nodes[2], 10, speed10, null);
-        c2d_1 = Node.linkNodes(nodes[2], nodes[3], 20, speed10, null);
-        c2d_2 = Node.linkNodes(nodes[2], nodes[3], 10, speed10, null);
-        c2d_3 = Node.linkNodes(nodes[2], nodes[3], 15, speed20, null);
-        d2a = Node.linkNodes(nodes[3], nodes[0], 15, speed10, null);
-        d2e = Node.linkNodes(nodes[3], nodes[4], 22.8f, speed20, null);
-        e2d = Node.linkNodes(nodes[4], nodes[0], 10, speed10, null);
+                
+        e2d = Node.linkNodes(nodes[4], nodes[3], 2, null, null);
+        e2f = Node.linkNodes(nodes[4], nodes[5], 3, null, null);
+        e2c = Node.linkNodes(nodes[4], nodes[2], 2, null, null);
+        f2e = Node.linkNodes(nodes[5], nodes[4], 3, null, null);
 
         graph = new Graph("ID", "", Arrays.asList(nodes), null);
 
