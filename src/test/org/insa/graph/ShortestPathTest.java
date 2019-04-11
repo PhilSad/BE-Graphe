@@ -44,8 +44,12 @@ public class ShortestPathTest {
         // Add arcs...
         a2b = Node.linkNodes(nodes[0], nodes[1], 7, null, null);
         a2c = Node.linkNodes(nodes[0], nodes[2], 8, null, null);
-        b2d = Node.linkNodes(nodes[1], nodes[3], 8, null, null);
-        
+        b2d = Node.linkNodes(nodes[1], nodes[3], 4, null, null);
+        b2e = Node.linkNodes(nodes[1], nodes[4], 1, null, null);
+        b2f = Node.linkNodes(nodes[1], nodes[5], 5, null, null);
+        c2a = Node.linkNodes(nodes[2], nodes[0], 7, null, null);
+        c2b = Node.linkNodes(nodes[2], nodes[1], 2, null, null);
+        c2f = Node.linkNodes(nodes[2], nodes[5], 2, null, null);
         
         b2d = Node.linkNodes(nodes[0], nodes[3], 15, speed20, null);
         b2c = Node.linkNodes(nodes[1], nodes[2], 10, speed10, null);
