@@ -20,14 +20,19 @@ public class Label implements Comparable<Label>{
 		this.pere = null;
 	}
 	
-	public static Label addLabel(Node sommetCourant) {
+	private static Label addLabel(Node sommetCourant) {
 		Label label = new Label(sommetCourant);
 		Label.hashmap.put(sommetCourant.getId(), label);
 		return label;
 	}
 	
-	public static Label getLabel(int id) {
-		return Label.hashmap.get(id);
+	public static Label getLabel(Node node) {
+		Label label = Label.hashmap.get(node.getId());
+		if(label != null) {
+			return label;
+		} else {
+			return addLabel(node);
+		}
 	}
 	
 

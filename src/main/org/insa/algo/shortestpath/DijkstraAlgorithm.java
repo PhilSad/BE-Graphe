@@ -24,15 +24,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         ShortestPathSolution solution = null;
         
         BinaryHeap<Label> tas = new BinaryHeap<Label>();
-        List<Node> nodes = this.data.getGraph().getNodes();
         
         Node origin = data.getOrigin();
         
-        for(Node node : nodes) { // on crée des labels pour chaque noeud
-        	Label.addLabel(node);
-        }
-        
-        Label originLabel = Label.getLabel(origin.getId());
+        Label originLabel = Label.getLabel(origin);
         originLabel.setCost(0.0);
         tas.insert(originLabel);
 
@@ -52,7 +47,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 	continue;
                 }
         		
-        		Label y = Label.getLabel(a.getDestination().getId());
+        		Label y = Label.getLabel(a.getDestination());
         		if(!y.isMarque()) {
         			
         			Double newCost;
@@ -81,7 +76,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         /* Crée le path*/
         
         Node destination = data.getDestination();
-        Label curLabel = Label.getLabel(destination.getId());
+        Label curLabel = Label.getLabel(destination);
         
         if(curLabel.getPere() == null) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
@@ -91,7 +86,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	List<Node> pathNodes = new ArrayList<Node>();        
         	do {
         		pathNodes.add(curLabel.getSommetCourant());
-        		curLabel = Label.getLabel(curLabel.getPere().getId());
+        		curLabel = Label.getLabel(curLabel.getPere());
         	}while(!curLabel.getSommetCourant().equals(origin));
         	
         	pathNodes.add(origin);

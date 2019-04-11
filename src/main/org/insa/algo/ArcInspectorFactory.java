@@ -11,6 +11,10 @@ import org.insa.graph.Arc;
 import org.insa.graph.GraphStatistics;
 
 public class ArcInspectorFactory {
+	
+	public enum TypeFiltre {
+		NOFILTER, SHORTCARS, FASTALL, FASTCAR, FASTFOOT, SHORTFOOT
+	}
 
     /**
      * @return List of all arc filters in this factory.
