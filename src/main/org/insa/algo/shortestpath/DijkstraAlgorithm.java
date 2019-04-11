@@ -34,16 +34,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Label originLabel = Label.getLabel(origin.getId());
         originLabel.setCost(0.0);
         tas.insert(originLabel);
+
+        notifyOriginProcessed(origin); // notify origin processed
         
         /* Algorithme de Dijkstra */
         while(!tas.isEmpty()) {
         	Label x = tas.deleteMin();
-        	x.setMarque(true);
+        	x.setMarque(true);        	
+        	
+        	notifyNodeMarked(x.getSommetCourant()); // notify node marked
+        	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
         		
         		// Small test to check allowed roads...
                 if (!data.isAllowed(a)) {
-                	
                 	continue;
                 }
         		
@@ -51,8 +55,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		if(!y.isMarque()) {
         			Double newCost = Math.min(y.getCost(), x.getCost() + a.getLength());
         			if(newCost != y.getCost()) {
-        				if(y.getCost() == Double.MAX_VALUE) //rajoute dans le tas si on n'a pas touché sa valeur
-        					tas.insert(y);        					
+        				
+    					//rajoute dans le tas si on n'a pas encore touché sa valeur
+        				if(y.getCost() == Double.MAX_VALUE) {
+        					tas.insert(y);
+        					notifyNodeReached(y.getSommetCourant()); // notify node reached
+        				}
         				
         				y.setCost(newCost);
         				y.setPere(x.getSommetCourant());
@@ -63,22 +71,28 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         /* Crée le path*/
         
-        Node destination = data.getDestination();     
+        Node destination = data.getDestination();
+        Label curLabel = Label.getLabel(destination.getId());
         
-        List<Node> pathNodes = new ArrayList<Node>();
+        if(curLabel.getPere() == null) {
+        	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+        } else {
+        	notifyDestinationReached(data.getDestination()); // notify destination reached
+        	
+        	List<Node> pathNodes = new ArrayList<Node>();        
+        	do {
+        		pathNodes.add(curLabel.getSommetCourant());
+        		curLabel = Label.getLabel(curLabel.getPere().getId());
+        	}while(!curLabel.getSommetCourant().equals(origin));
+        	
+        	pathNodes.add(origin);
+        	Collections.reverse(pathNodes);
+        	
+        	Path path = Path.createShortestPathFromNodes(data.getGraph(), pathNodes);
+        	
+        	solution = new ShortestPathSolution(data, Status.FEASIBLE, path);
+       }
         
-        Label curNode = Label.getLabel(destination.getId());
-        do {
-        	pathNodes.add(curNode.getSommetCourant());
-        	curNode = Label.getLabel(curNode.getPere().getId());
-        }while(!curNode.getSommetCourant().equals(origin));
-        
-        pathNodes.add(origin);
-        Collections.reverse(pathNodes);
-        
-        Path path = Path.createShortestPathFromNodes(data.getGraph(), pathNodes);
-        
-        solution = new ShortestPathSolution(data, Status.FEASIBLE, path);
         
         return solution;
     }
