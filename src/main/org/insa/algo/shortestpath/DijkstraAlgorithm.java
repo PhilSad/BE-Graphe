@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.insa.algo.AbstractInputData;
 import org.insa.algo.AbstractSolution.Status;
 import org.insa.algo.utils.BinaryHeap;
 import org.insa.algo.utils.Label;
@@ -43,13 +44,22 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		
         		// Small test to check allowed roads...
                 if (!data.isAllowed(a)) {
-                	
+   
                 	continue;
                 }
         		
         		Label y = Label.getLabel(a.getDestination().getId());
         		if(!y.isMarque()) {
-        			Double newCost = Math.min(y.getCost(), x.getCost() + a.getLength());
+        			
+        			Double newCost;
+        			
+        			if(data.getMode() == AbstractInputData.Mode.LENGTH) {
+        				newCost = Math.min(y.getCost(), x.getCost() + a.getLength());
+        			}
+        			else {
+        				newCost = Math.min(y.getCost(), x.getCost() + a.getMinimumTravelTime());
+        			}
+        			
         			if(newCost != y.getCost()) {
         				if(y.getCost() == Double.MAX_VALUE) //rajoute dans le tas si on n'a pas touché sa valeur
         					tas.insert(y);        					
@@ -60,7 +70,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		}
         	}
         }
-        
         /* Crée le path*/
         
         Node destination = data.getDestination();     
