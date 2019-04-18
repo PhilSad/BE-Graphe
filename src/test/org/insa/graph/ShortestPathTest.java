@@ -83,14 +83,20 @@ public class ShortestPathTest {
 				
 				ShortestPathSolution solDijkstra = dijkstra.run();
 				ShortestPathSolution solBellmanford = bellmanford.run();
+				Path pathDijkstra = solDijkstra.getPath();
+				Path pathBellmanford = solBellmanford.getPath();
 				
-				System.out.println(solDijkstra.getPath().getLength());
-				System.out.println(solBellmanford.getPath().getLength());
+				if(pathDijkstra != null && pathBellmanford != null) {
+					System.out.println(pathDijkstra);
+					System.out.println(pathBellmanford);
+					assertEquals(pathDijkstra.getLength(), pathBellmanford.getLength(), 0.01f);
+					System.out.print(pathBellmanford.getLength() + ", (" + "x0" +") \t");
+				} else {
+					assertNull(pathBellmanford);
+					assertNull(pathDijkstra);
+					System.out.print("\t");
+				}
 				
-				assertEquals(solDijkstra.getPath().getLength(), solBellmanford.getPath().getLength(), 0.01f);
-				
-				Path solution = solDijkstra.getPath();
-				System.out.print(solution.getLength() + ", (" + "x0" +") \t");
 			}
 			System.out.println();
 		}
