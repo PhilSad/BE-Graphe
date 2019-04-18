@@ -371,5 +371,18 @@ public class Path {
         }
         return travelTime;
     }
+    
+    
+    public String toString() {
+    	String ret = "Path : ";
+    	for(int i =0; i<this.arcs.size() ; i++) {
+    		ret += this.arcs.get(i).getOrigin().getId() + " " ;
+    	}
+    	ret += this.arcs.get(this.arcs.size()-1).getDestination().getId();
+    	return ret;
+    }
+    
+    
+    
 
 }
