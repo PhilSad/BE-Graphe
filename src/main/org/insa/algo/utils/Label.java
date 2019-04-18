@@ -1,7 +1,5 @@
 package org.insa.algo.utils;
 
-import java.util.HashMap;
-
 import org.insa.graph.Node;
 
 public class Label implements Comparable<Label>{

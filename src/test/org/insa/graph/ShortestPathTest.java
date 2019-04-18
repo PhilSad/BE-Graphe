@@ -2,6 +2,10 @@ package org.insa.graph;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -12,6 +16,8 @@ import org.insa.algo.shortestpath.DijkstraAlgorithm;
 import org.insa.algo.shortestpath.ShortestPathData;
 import org.insa.algo.shortestpath.ShortestPathSolution;
 import org.insa.graph.RoadInformation.RoadType;
+import org.insa.graph.io.BinaryGraphReader;
+import org.insa.graph.io.GraphReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -62,7 +68,7 @@ public class ShortestPathTest {
 		
 		System.out.print("\t");
 		for(Node node : nodes)
-			System.out.print("x" + node.getId() + "\t \t");
+			System.out.print("   x" + node.getId() + "\t \t");
 		
 		System.out.println();
 		
@@ -71,7 +77,7 @@ public class ShortestPathTest {
 			for(Node destination : graph.getNodes()) {
 				
 				if(origin.equals(destination)) {
-					System.out.print("\t\t");
+					System.out.print("   Ø\t\t");
 					continue;
 				}
 				
@@ -87,18 +93,35 @@ public class ShortestPathTest {
 				Path pathBellmanford = solBellmanford.getPath();
 				
 				if(pathDijkstra != null && pathBellmanford != null) {
-					//System.out.println(origin.getId() + " -> " + destination.getId() + " : " + pathDijkstra + " " + pathBellmanford);
 					assertEquals(pathDijkstra.getLength(), pathBellmanford.getLength(), 0.01f);
-					System.out.print(pathBellmanford.getLength() + ", (" + "x0" +") \t");
+					System.out.print(pathDijkstra.getLength() + ", (x" + pathDijkstra.getArcs().get(pathDijkstra.getArcs().size() - 1).getOrigin().getId() +") \t");
 				} else {
 					assertNull(pathBellmanford);
 					assertNull(pathDijkstra);
-					System.out.print("\t\t");
+					System.out.print("   Ø\t\t");
 				}
 				
 			}
 			System.out.println();
 		}
+	}
+	
+	@Test
+	public void testValiditeCarte() throws IOException {
+        String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
+        GraphReader reader = new BinaryGraphReader(
+                new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+        Graph graph = reader.read();
+        
+        //metro rangueil
+        Node origin = graph.get(1114);
+        //metro fac de pharma
+        Node destination = graph.get(420);
+        
+		ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(ArcInspectorFactory.TypeFiltre.NOFILTER.ordinal());
+        
+        ShortestPathData data = new ShortestPathData(graph, origin, destination, arcInspector);
+		
 	}
 
 }

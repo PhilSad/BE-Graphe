@@ -21,14 +21,16 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
     @Override
     protected ShortestPathSolution doRun() {
+    	/* Declaration des variables */
         ShortestPathData data = getInputData();
-        ShortestPathSolution solution = null;
-        
+        ShortestPathSolution solution = null;    
         BinaryHeap<Label> tas = new BinaryHeap<Label>();
-    	HashMap<Integer,Label> hashmap = new HashMap<Integer, Label>();
-        
+    	HashMap<Integer,Label> hashmap = new HashMap<Integer, Label>();        
         Node origin = data.getOrigin();
+        Node destination = data.getDestination();
+        boolean fin = false;
         
+        /* On ajoute le sommet de départ dans le tas */
         Label labelOrigin = new Label(origin);
         hashmap.put(origin.getId(), labelOrigin);
         labelOrigin.setCost(0.0);
@@ -37,18 +39,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         notifyOriginProcessed(origin); // notify origin processed
         
         /* Algorithme de Dijkstra */
-        while(!tas.isEmpty()) {
+        while(!tas.isEmpty() && !fin) {
         	Label x = tas.deleteMin();
-        	x.setMarque(true);        	
+        	x.setMarque(true);
         	
         	notifyNodeMarked(x.getSommetCourant()); // notify node marked
         	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
         		
-        		// Small test to check allowed roads...
-                if (!data.isAllowed(a)) {
+        		// on verifie que la route est empruntable
+                if (!data.isAllowed(a))
                 	continue;
-                }
         		
                 // on recupere le label si il existe, sinon on le crée
                 Label y = hashmap.get(a.getDestination().getId());
@@ -56,22 +57,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 	y = new Label(a.getDestination());
                 	hashmap.put(a.getDestination().getId(), y);
                 }
-        		
-        		
+                
         		if(!y.isMarque()) {
-        			
         			Double newCost;
-        			
+        			//TODO changer pour truc auto voir bellman
         			if(data.getMode() == AbstractInputData.Mode.LENGTH) {
-        				newCost = Math.min(y.getCost(), x.getCost() + a.getLength());
-        			}
-        			else {
-        				newCost = Math.min(y.getCost(), x.getCost() + a.getMinimumTravelTime());
+        				newCost = Math.min(y.getCost(), x.getCost() + a.getLength()); // si on cherche le chemin le plus court
+        			} else {
+        				newCost = Math.min(y.getCost(), x.getCost() + a.getMinimumTravelTime()); // si on cherche le chemin le plus rapide
         			}
         			
-        			if(newCost != y.getCost()) {
-        				
-    					//rajoute dans le tas si on n'a pas encore touché sa valeur
+        			if(newCost < y.getCost()) {           				
+    					// rajoute dans le tas si on n'a pas encore touché sa valeur
         				if(y.getCost() == Double.MAX_VALUE) {
         					tas.insert(y);
         					notifyNodeReached(y.getSommetCourant()); // notify node reached
@@ -79,13 +76,19 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         				
         				y.setCost(newCost);
         				y.setPere(x.getSommetCourant());
+        				
+        				//on supprime et rajoute le label pour mettre à jour sa position
+        				tas.remove(y);
+        				tas.insert(y);
         			}        			
         		}
         	}
+        	
+        	if(hashmap.get(destination.getId()) != null)
+        		fin = hashmap.get(destination.getId()).isMarque();
         }
         
         /* Crée le path*/        
-        Node destination = data.getDestination();
         
         Label curLabel = hashmap.get(destination.getId());
         if(curLabel == null) {
