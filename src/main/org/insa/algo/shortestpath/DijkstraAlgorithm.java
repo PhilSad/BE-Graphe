@@ -2,6 +2,7 @@ package org.insa.algo.shortestpath;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.insa.algo.AbstractInputData;
@@ -24,12 +25,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         ShortestPathSolution solution = null;
         
         BinaryHeap<Label> tas = new BinaryHeap<Label>();
+    	HashMap<Integer,Label> hashmap = new HashMap<Integer, Label>();
         
         Node origin = data.getOrigin();
         
-        Label originLabel = Label.getLabel(origin);
-        originLabel.setCost(0.0);
-        tas.insert(originLabel);
+        Label labelOrigin = new Label(origin);
+        hashmap.put(origin.getId(), labelOrigin);
+        labelOrigin.setCost(0.0);
+        tas.insert(labelOrigin);
 
         notifyOriginProcessed(origin); // notify origin processed
         
@@ -47,7 +50,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 	continue;
                 }
         		
-        		Label y = Label.getLabel(a.getDestination());
+                // on recupere le label si il existe, sinon on le crée
+                Label y = hashmap.get(a.getDestination().getId());
+                if(y == null) {
+                	y = new Label(a.getDestination());
+                	hashmap.put(a.getDestination().getId(), y);
+                }
+        		
+        		
         		if(!y.isMarque()) {
         			
         			Double newCost;
@@ -73,10 +83,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		}
         	}
         }
-        /* Crée le path*/
         
+        /* Crée le path*/        
         Node destination = data.getDestination();
-        Label curLabel = Label.getLabel(destination);
+        
+        Label curLabel = hashmap.get(destination.getId());
+        if(curLabel == null) {
+        	curLabel = new Label(destination);
+        	hashmap.put(destination.getId(), curLabel);
+        }
         
         if(curLabel.getPere() == null) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
@@ -86,7 +101,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	List<Node> pathNodes = new ArrayList<Node>();        
         	do {
         		pathNodes.add(curLabel.getSommetCourant());
-        		curLabel = Label.getLabel(curLabel.getPere());
+        		curLabel = hashmap.get(curLabel.getPere().getId());
         	}while(!curLabel.getSommetCourant().equals(origin));
         	
         	pathNodes.add(origin);

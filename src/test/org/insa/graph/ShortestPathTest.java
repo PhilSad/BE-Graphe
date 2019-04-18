@@ -62,20 +62,20 @@ public class ShortestPathTest {
 		
 		System.out.print("\t");
 		for(Node node : nodes)
-			System.out.print("x" + node.getId() + "\t");
+			System.out.print("x" + node.getId() + "\t \t");
 		
 		System.out.println();
 		
 		for(Node origin : graph.getNodes()) {
-			System.out.println("x" + origin.getId() + "\t");
+			System.out.print("x" + origin.getId() + "\t");
 			for(Node destination : graph.getNodes()) {
 				
 				if(origin.equals(destination)) {
-					System.out.print("\t");
+					System.out.print("\t\t");
 					continue;
 				}
 				
-				ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(ArcInspectorFactory.TypeFiltre.FASTALL.ordinal());
+				ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(ArcInspectorFactory.TypeFiltre.NOFILTER.ordinal());
 				
 				ShortestPathData data = new ShortestPathData(graph, origin, destination, arcInspector);
 				DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(data);
@@ -87,14 +87,13 @@ public class ShortestPathTest {
 				Path pathBellmanford = solBellmanford.getPath();
 				
 				if(pathDijkstra != null && pathBellmanford != null) {
-					System.out.println(pathDijkstra);
-					System.out.println(pathBellmanford);
+					//System.out.println(origin.getId() + " -> " + destination.getId() + " : " + pathDijkstra + " " + pathBellmanford);
 					assertEquals(pathDijkstra.getLength(), pathBellmanford.getLength(), 0.01f);
 					System.out.print(pathBellmanford.getLength() + ", (" + "x0" +") \t");
 				} else {
 					assertNull(pathBellmanford);
 					assertNull(pathDijkstra);
-					System.out.print("\t");
+					System.out.print("\t\t");
 				}
 				
 			}

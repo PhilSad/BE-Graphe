@@ -11,39 +11,13 @@ public class Label implements Comparable<Label>{
 	private double cout;
 	private Node pere;
 	
-	private static HashMap<Integer,Label> hashmap = new HashMap<Integer, Label>();
-	
-	private Label(Node sommetCourant) {
+	public Label(Node sommetCourant) {
 		this.sommetCourant = sommetCourant;
 		this.marque = false;
 		this.cout = Double.MAX_VALUE;
 		this.pere = null;
 	}
 	
-	private static Label addLabel(Node sommetCourant) {
-		Label label = new Label(sommetCourant);
-		Label.hashmap.put(sommetCourant.getId(), label);
-		return label;
-	}
-	
-	public static Label getLabel(Node node) {
-		Label label = Label.hashmap.get(node.getId());
-		if(label != null) {
-			return label;
-		} else {
-			return addLabel(node);
-		}
-	}
-	
-
-    public static boolean unmarkedNodeExist() {
-    	for(int key : hashmap.keySet()) {
-    		if(!hashmap.get(key).marque)
-    			return true;
-    	}
-    	return false;
-    }
-
 	public double getCost() {
 		return this.cout;
 	}
