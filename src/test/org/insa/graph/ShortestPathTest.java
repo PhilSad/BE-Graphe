@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.insa.algo.AbstractInputData.Mode;
 import org.insa.algo.ArcInspector;
 import org.insa.algo.ArcInspectorFactory;
 import org.insa.algo.shortestpath.BellmanFordAlgorithm;
@@ -32,7 +33,11 @@ public class ShortestPathTest {
     // List of arcs in the graph, a2b is the arc from node A (0) to B (1).
     @SuppressWarnings("unused")
     private static Arc a2b, a2c, b2d, b2e, b2f, c2a, c2b, c2f, e2d, e2f, e2c, f2e;
-
+    
+    
+    private static ShortestPathSolution [] dijkstraruns;
+    
+    
     @BeforeClass
     public static void initAll() throws IOException {
 
@@ -60,6 +65,8 @@ public class ShortestPathTest {
 		f2e = Node.linkNodes(nodes[5], nodes[4], 3, roadInfo, null);
 
         graph = new Graph("ID", "", Arrays.asList(nodes), null);
+        
+        //TODO Ajouter les valeurs des tests
     
     }
 
@@ -124,4 +131,42 @@ public class ShortestPathTest {
 		
 	}
 
+	
+	@Test
+	public void testValidechemin() {
+		// Pour chaque combinaisons
+		for (ShortestPathSolution solution : dijkstraruns) {
+			Path cheminSol = solution.getPath();
+			assertTrue(cheminSol.isValid());
+		}
+	}
+	
+
+	
+	@Test
+	public void testCoutValide() {
+		
+		for (ShortestPathSolution solution : dijkstraruns) {
+			
+			if(solution.getInputData().getMode() == Mode.LENGTH) {
+				assertEquals(solution.getCost(), solution.getPath().getLength(), 0.1);
+
+			}
+			else if (solution.getInputData().getMode() == Mode.TIME) {
+				assertEquals(solution.getCost(), solution.getPath().getMinimumTravelTime(), 0.1);
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
