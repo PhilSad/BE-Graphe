@@ -50,10 +50,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
         		
-        		/*
+        		
         		if(!tas.isValid())
         			System.out.println("Le tas n'est pas valide !!");
-        		*/
+        		
         		
         		// on verifie que la route est empruntable
                 if (!data.isAllowed(a))
@@ -96,9 +96,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		fin = hashmap.get(destination.getId()).isMarque();
         }
         
-        /* cout vers la destination */
-        this.cost = hashmap.get(destination.getId()).getCost();
-        
         /* Crée le path*/        
         
         Label curLabel = hashmap.get(destination.getId());
@@ -110,6 +107,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         if(curLabel.getPere() == null) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         } else {
+            /* cout vers la destination */
+            this.cost = hashmap.get(destination.getId()).getCost();
+            
         	notifyDestinationReached(data.getDestination()); // notify destination reached
         	
         	List<Node> pathNodes = new ArrayList<Node>();        
