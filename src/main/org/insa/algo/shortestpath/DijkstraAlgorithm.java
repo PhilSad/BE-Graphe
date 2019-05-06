@@ -15,7 +15,7 @@ import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
-	/* cou du chemin le plus court */
+	/* cout du chemin le plus court */
 	public Double cost = null;
 	
     public DijkstraAlgorithm(ShortestPathData data) {
@@ -50,10 +50,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
         		
-        		
+        		/*
         		if(!tas.isValid())
         			System.out.println("Le tas n'est pas valide !!");
-        		
+        		*/
         		
         		// on verifie que la route est empruntable
                 if (!data.isAllowed(a))

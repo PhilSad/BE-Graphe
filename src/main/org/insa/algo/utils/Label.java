@@ -6,7 +6,7 @@ public class Label implements Comparable<Label>{
 
 	private Node sommetCourant;
 	private boolean marque;
-	private double cout;
+	protected double cout;
 	private Node pere;
 	
 	public Label(Node sommetCourant) {
