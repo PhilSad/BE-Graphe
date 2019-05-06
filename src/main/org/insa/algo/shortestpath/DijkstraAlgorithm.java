@@ -15,6 +15,9 @@ import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
+	/* cou du chemin le plus court */
+	public Double cost = null;
+	
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
@@ -46,6 +49,11 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	notifyNodeMarked(x.getSommetCourant()); // notify node marked
         	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
+        		
+        		/*
+        		if(!tas.isValid())
+        			System.out.println("Le tas n'est pas valide !!");
+        		*/
         		
         		// on verifie que la route est empruntable
                 if (!data.isAllowed(a))
@@ -88,6 +96,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		fin = hashmap.get(destination.getId()).isMarque();
         }
         
+        /* cout vers la destination */
+        this.cost = hashmap.get(destination.getId()).getCost();
+        
         /* Crée le path*/        
         
         Label curLabel = hashmap.get(destination.getId());
@@ -117,6 +128,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         
         return solution;
+    }
+    
+    public double getCost() {
+    	return cost;
     }
 
 }
