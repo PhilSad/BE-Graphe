@@ -7,7 +7,11 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.insa.algo.AbstractInputData.Mode;
 import org.insa.algo.ArcInspector;
@@ -35,8 +39,17 @@ public class ShortestPathTest {
     private static Arc a2b, a2c, b2d, b2e, b2f, c2a, c2b, c2f, e2d, e2f, e2c, f2e;
     
     
-    private static ShortestPathSolution [] dijkstraruns;
+    private static List<DijkstraAlgorithm> dijkstras;
     
+    
+    private class Pair <A,B> {
+    	A a;
+    	B b;
+    	public Pair(A a, B b) {
+    		this.a = a;
+    		this.b = b;
+    	}
+    }
     
     @BeforeClass
     public static void initAll() throws IOException {
@@ -66,9 +79,43 @@ public class ShortestPathTest {
 
         graph = new Graph("ID", "", Arrays.asList(nodes), null);
         
-        //TODO Ajouter les valeurs des tests
+        //Construction des scénarios de test
+        
+        Node [] origines;
+        Node [] destinations;
+        
+        Map<Graph, List<Pair<Node, Node >>> scenarios = new HashMap<>();
+        
+        String basePath = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/";
+        String[] graphPaths = {"Haute-Garonne", "french-polynesia.mapgr", "carre" };
+        
+        List<Graph> graphs = new ArrayList<>();
+        GraphReader reader;
+        for(String path : graphPaths) {
+        	reader = new BinaryGraphReader(
+                    new DataInputStream(new BufferedInputStream(new FileInputStream(basePath + path + ".mapgr"))));
+        	
+        	graphs.add(reader.read());
+        }
+        
+        for(Graph g : graphs ) {
+        	scenarios.put(g, new ArrayList<>());
+        }
+        
+        scenarios.get(graphs.get(0)).add(new Pair<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
+        scenarios.get(graphs.get(0)).add(new Pair<Node, Node>(graphs.get(1).get(3765), graphs.get(1).get(67549)) ); // Ile 1 -> Ile 2
+        scenarios.get(graphs.get(0)).add(new Pair<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(89149)) ); // Carré coin -> coin (null)
+        
+        // Application de dixtra
+        
+        for(Graph g : scenarios.keySet() ) {
+        	for(Pair p : scenarios.get(g)) {
+        		
+        	}
+        }
     
     }
+
 
 	@Test
 	public void testTableauDistancier() {
@@ -135,7 +182,11 @@ public class ShortestPathTest {
 	@Test
 	public void testValidechemin() {
 		// Pour chaque combinaisons
-		for (ShortestPathSolution solution : dijkstraruns) {
+		
+		for (DijkstraAlgorithm algo : dijkstras) {
+			
+			ShortestPathSolution solution = algo.run();
+			
 			Path cheminSol = solution.getPath();
 			assertTrue(cheminSol.isValid());
 		}
@@ -146,14 +197,16 @@ public class ShortestPathTest {
 	@Test
 	public void testCoutValide() {
 		
-		for (ShortestPathSolution solution : dijkstraruns) {
+		for (DijkstraAlgorithm algo : dijkstras) {
+			
+			ShortestPathSolution solution = algo.run();
 			
 			if(solution.getInputData().getMode() == Mode.LENGTH) {
-				assertEquals(solution.getCost(), solution.getPath().getLength(), 0.1);
+				assertEquals(algo.getCost(), solution.getPath().getLength(), 0.1);
 
 			}
 			else if (solution.getInputData().getMode() == Mode.TIME) {
-				assertEquals(solution.getCost(), solution.getPath().getMinimumTravelTime(), 0.1);
+				assertEquals(algo.getCost(), solution.getPath().getMinimumTravelTime(), 0.1);
 			}
 			
 		}
