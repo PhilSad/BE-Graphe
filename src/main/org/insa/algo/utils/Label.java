@@ -34,7 +34,12 @@ public class Label implements Comparable<Label>{
 
 	@Override
 	public int compareTo(Label o) {
-		return (int) (this.getCost() - o.getCost());
+		if(this.getCost() < o.getCost())
+			return -1;
+		else if(this.getCost() > o.getCost())
+			return 1;
+		else
+			return 0;
 	}
 
 	public void setCost(Double cost) {
@@ -52,8 +57,8 @@ public class Label implements Comparable<Label>{
 	@Override
 	public String toString() {
 		if(pere != null)
-			return sommetCourant.getId() + " : " + cout + " [" + pere.getId() + ", " + marque + "]";
+			return sommetCourant.getId() + " : " + this.getCost() + " [" + pere.getId() + ", " + marque + "]";
 		else
-			return sommetCourant.getId() + " : " + cout + " [ null, " + marque + "]";
+			return sommetCourant.getId() + " : " + this.getCost() + " [ null, " + marque + "]";
 	}
 }

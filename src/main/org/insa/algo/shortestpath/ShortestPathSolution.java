@@ -9,7 +9,7 @@ public class ShortestPathSolution extends AbstractSolution {
 
     // Optimal solution.
     private Path path;
-
+    
     /**
      * {@inheritDoc}
      */
