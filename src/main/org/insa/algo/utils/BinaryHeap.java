@@ -221,7 +221,23 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
         System.out.println();
     }
     
-    
+    public boolean isValid() {
+    	BinaryHeap<E> copy = new BinaryHeap<E>(this);
+    	
+    	if(copy.isEmpty())
+    		return true;
+    	
+    	E last = copy.deleteMin();
+    	while(!copy.isEmpty()) {
+    		E current = copy.deleteMin();
+    		if(last.compareTo(current) > 0) {
+    			return false;
+    		}
+    		last = current;
+    	}
+    	
+    	return true;
+    }
     
     
     
