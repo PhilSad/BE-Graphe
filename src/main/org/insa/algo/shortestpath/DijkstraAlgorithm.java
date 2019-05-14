@@ -21,6 +21,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
+    
+    public Label createLabel(Node current, Node destination) {
+    	return new Label(current);
+    }
 
     @Override
     protected ShortestPathSolution doRun() {
@@ -28,14 +32,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;    
         BinaryHeap<Label> tas = new BinaryHeap<Label>();
-    	HashMap<Integer,Label> hashmap = new HashMap<Integer, Label>();        
+    	HashMap<Integer,Label> lablels = new HashMap<Integer, Label>();        
         Node origin = data.getOrigin();
         Node destination = data.getDestination();
         boolean fin = false;
         
         /* On ajoute le sommet de départ dans le tas */
-        Label labelOrigin = new Label(origin);
-        hashmap.put(origin.getId(), labelOrigin);
+        Label labelOrigin = createLabel(origin, destination);
+        lablels.put(origin.getId(), labelOrigin);
         labelOrigin.setCost(0.0);
         tas.insert(labelOrigin);
 
@@ -50,30 +54,19 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         	for(Arc a : x.getSommetCourant().getSuccessors()) {
         		
-        		/*
-        		if(!tas.isValid())
-        			System.out.println("Le tas n'est pas valide !!");
-        		*/
-        		
         		// on verifie que la route est empruntable
                 if (!data.isAllowed(a))
                 	continue;
         		
                 // on recupere le label si il existe, sinon on le crée
-                Label y = hashmap.get(a.getDestination().getId());
+                Label y = lablels.get(a.getDestination().getId());
                 if(y == null) {
-                	y = new Label(a.getDestination());
-                	hashmap.put(a.getDestination().getId(), y);
+                	y = createLabel(a.getDestination(), destination);
+                	lablels.put(a.getDestination().getId(), y);
                 }
                 
         		if(!y.isMarque()) {
-        			Double newCost;
-        			//TODO changer pour truc auto voir bellman
-        			if(data.getMode() == AbstractInputData.Mode.LENGTH) {
-        				newCost = Math.min(y.getCost(), x.getCost() + a.getLength()); // si on cherche le chemin le plus court
-        			} else {
-        				newCost = Math.min(y.getCost(), x.getCost() + a.getMinimumTravelTime()); // si on cherche le chemin le plus rapide
-        			}
+        			Double newCost = Math.min(y.getCost(), x.getCost() + data.getCost(a));
         			
         			if(newCost < y.getCost()) {           				
     					// rajoute dans le tas si on n'a pas encore touché sa valeur
@@ -92,30 +85,29 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		}
         	}
         	
-        	if(hashmap.get(destination.getId()) != null)
-        		fin = hashmap.get(destination.getId()).isMarque();
+        	if(lablels.get(destination.getId()) != null)
+        		fin = lablels.get(destination.getId()).isMarque();
         }
         
         /* Crée le path*/        
         
-        Label curLabel = hashmap.get(destination.getId());
+        Label curLabel = lablels.get(destination.getId());
         if(curLabel == null) {
-        	curLabel = new Label(destination);
-        	hashmap.put(destination.getId(), curLabel);
+        	curLabel = createLabel(destination, destination);
         }
         
         if(curLabel.getPere() == null) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         } else {
             /* cout vers la destination */
-            this.cost = hashmap.get(destination.getId()).getCost();
+            this.cost = lablels.get(destination.getId()).getCost();
             
         	notifyDestinationReached(data.getDestination()); // notify destination reached
         	
         	List<Node> pathNodes = new ArrayList<Node>();        
         	do {
         		pathNodes.add(curLabel.getSommetCourant());
-        		curLabel = hashmap.get(curLabel.getPere().getId());
+        		curLabel = lablels.get(curLabel.getPere().getId());
         	}while(!curLabel.getSommetCourant().equals(origin));
         	
         	pathNodes.add(origin);
