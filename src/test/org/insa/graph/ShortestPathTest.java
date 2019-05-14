@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +15,7 @@ import java.util.Map;
 import org.insa.algo.AbstractInputData.Mode;
 import org.insa.algo.ArcInspector;
 import org.insa.algo.ArcInspectorFactory;
+import org.insa.algo.ArcInspectorFactory.TypeFiltre;
 import org.insa.algo.shortestpath.BellmanFordAlgorithm;
 import org.insa.algo.shortestpath.DijkstraAlgorithm;
 import org.insa.algo.shortestpath.ShortestPathData;
@@ -23,6 +23,7 @@ import org.insa.algo.shortestpath.ShortestPathSolution;
 import org.insa.graph.RoadInformation.RoadType;
 import org.insa.graph.io.BinaryGraphReader;
 import org.insa.graph.io.GraphReader;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -41,11 +42,13 @@ public class ShortestPathTest {
     
     private static List<DijkstraAlgorithm> dijkstras;
     
+    private static Map<Graph, List<Paire<Node, Node >>> scenarios;
     
-    private class Pair <A,B> {
+    
+    static class Paire <A,B> {
     	A a;
     	B b;
-    	public Pair(A a, B b) {
+    	public Paire(A a, B b) {
     		this.a = a;
     		this.b = b;
     	}
@@ -84,14 +87,15 @@ public class ShortestPathTest {
         Node [] origines;
         Node [] destinations;
         
-        Map<Graph, List<Pair<Node, Node >>> scenarios = new HashMap<>();
+        scenarios = new HashMap<>();
         
         String basePath = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/";
-        String[] graphPaths = {"Haute-Garonne", "french-polynesia.mapgr", "carre" };
+        String[] graphPaths = {"haute-garonne", "french-polynesia", "carre" };
         
         List<Graph> graphs = new ArrayList<>();
         GraphReader reader;
         for(String path : graphPaths) {
+        	//System.out.println(basePath + path + ".mapgr");
         	reader = new BinaryGraphReader(
                     new DataInputStream(new BufferedInputStream(new FileInputStream(basePath + path + ".mapgr"))));
         	
@@ -102,20 +106,65 @@ public class ShortestPathTest {
         	scenarios.put(g, new ArrayList<>());
         }
         
-        scenarios.get(graphs.get(0)).add(new Pair<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
-        scenarios.get(graphs.get(0)).add(new Pair<Node, Node>(graphs.get(1).get(3765), graphs.get(1).get(67549)) ); // Ile 1 -> Ile 2
-        scenarios.get(graphs.get(0)).add(new Pair<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(89149)) ); // Carré coin -> coin (null)
+        scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
+        scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
+        scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
+        
+        
+        // INSPECTORS
+        
+        
         
         // Application de dixtra
         
-        for(Graph g : scenarios.keySet() ) {
-        	for(Pair p : scenarios.get(g)) {
-        		
-        	}
-        }
     
     }
 
+    
+    
+    @Test
+    public void testDixtra() {
+
+        for(Graph g : scenarios.keySet() ) {
+        	
+        	System.out.println("Carte : " + g.getMapName());
+        	 
+        	for(Paire<Node, Node> p : scenarios.get(g)) {
+        		System.out.println("\tfrom : " + p.a.getId() + " to : " + p.b.getId());
+        		
+        		for(TypeFiltre filtre : TypeFiltre.values()) {
+        			System.out.println("\t\t Filtre :" + filtre);
+        			
+        			ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(filtre.ordinal());
+        			    				
+    				ShortestPathData data = new ShortestPathData(g, p.a, p.b, arcInspector);
+    				DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(data);
+    				BellmanFordAlgorithm bellmanford = new BellmanFordAlgorithm(data);
+    				
+    				ShortestPathSolution solDijkstra = dijkstra.run();
+    				ShortestPathSolution solBellmanford = bellmanford.run();
+    				Path pathDijkstra = solDijkstra.getPath();
+    				Path pathBellmanford = solBellmanford.getPath();
+    				
+    				if(pathDijkstra == null && pathBellmanford == null) {
+    					System.out.println("0");
+    					assertNull(pathBellmanford);
+    					assertNull(pathDijkstra);
+
+    				} else {
+    					System.out.println(pathDijkstra.getLength() );
+    					System.out.println(pathBellmanford.getLength());
+    					assertEquals(pathDijkstra.getLength(), pathBellmanford.getLength(), 0.01f);
+    				}   			
+        			
+        		}
+        		
+        		System.out.println("Scénario suivant");
+        		
+        	}
+        }
+    }
+    
 
 	@Test
 	public void testTableauDistancier() {
