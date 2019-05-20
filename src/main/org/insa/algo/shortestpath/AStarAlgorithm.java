@@ -11,8 +11,8 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
     }
     
     @Override
-    public Label createLabel(Node current, Node destination) {
-    	return new LabelStar(current, destination);
+    public Label createLabel(Node current, ShortestPathData data) {
+    	return new LabelStar(current, data);
     }
 
 }

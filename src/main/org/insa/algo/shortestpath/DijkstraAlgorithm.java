@@ -22,7 +22,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         super(data);
     }
     
-    public Label createLabel(Node current, Node destination) {
+    public Label createLabel(Node current, ShortestPathData data) {
     	return new Label(current);
     }
 
@@ -38,7 +38,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         boolean fin = false;
         
         /* On ajoute le sommet de départ dans le tas */
-        Label labelOrigin = createLabel(origin, destination);
+        Label labelOrigin = createLabel(origin, data);
         lablels.put(origin.getId(), labelOrigin);
         labelOrigin.setCost(0.0);
         tas.insert(labelOrigin);
@@ -61,7 +61,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 // on recupere le label si il existe, sinon on le crée
                 Label y = lablels.get(a.getDestination().getId());
                 if(y == null) {
-                	y = createLabel(a.getDestination(), destination);
+                	y = createLabel(a.getDestination(), data);
                 	lablels.put(a.getDestination().getId(), y);
                 }
                 
@@ -94,7 +94,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Label curLabel = lablels.get(destination.getId());
         if(curLabel == null) {
-        	curLabel = createLabel(destination, destination);
+        	curLabel = createLabel(destination, data);
         }
         
         if(curLabel.getPere() == null) {
