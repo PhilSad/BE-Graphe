@@ -14,7 +14,7 @@ public class LabelStar extends Label{
 	}
 	
 	public double getTotalCost() {
-		return this.cout + this.coutDestination;
+		return this.getCost() + this.coutDestination;
 	}
 	
 	

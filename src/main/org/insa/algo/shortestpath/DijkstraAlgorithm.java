@@ -74,12 +74,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         					tas.insert(y);
         					notifyNodeReached(y.getSommetCourant()); // notify node reached
         				}
+
+        				tas.remove(y);
         				
         				y.setCost(newCost);
         				y.setPere(x.getSommetCourant());
         				
         				//on supprime et rajoute le label pour mettre à jour sa position
-        				tas.remove(y);
         				tas.insert(y);
         			}        			
         		}
