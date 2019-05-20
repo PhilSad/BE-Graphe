@@ -27,7 +27,6 @@ import org.insa.graph.io.GraphReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-enum Algorithm {BELLMAN, ASTAR, DIJKSTRA}
 
 public class ShortestPathTest {
 	
@@ -106,6 +105,10 @@ public class ShortestPathTest {
         	graphs.add(reader.read());
         }
         
+        
+        
+        
+        
         for(Graph g : graphs ) {
         	scenarios.put(g, new ArrayList<>());
         }
@@ -116,10 +119,17 @@ public class ShortestPathTest {
         scenarios.get(g).add(new Paire<Node, Node>(g.get(10991), g.get(89149)) );// INSA -> Aeroport
         
         g = graphs.get(graphPaths.indexOf("french-polynesia"));
-        scenarios.get(g).add(new Paire<Node, Node>(g.get(8654), g.get(9444)) ); // Ile 1 -> Ile 2
+        scenarios.get(g).add(new Paire<Node, Node>(g.get(8654), g.get(9444)) ); // Ile 1 -> Ile 2 (inexistant)
         
         g = graphs.get(graphPaths.indexOf("carre"));
         scenarios.get(g).add(new Paire<Node, Node>(g.get(9), g.get(9)) ); // Carré coin -> coin (null)
+        
+        
+        
+        
+        
+        
+        
         
         
         // INSPECTORS
@@ -133,8 +143,9 @@ public class ShortestPathTest {
     
     @Test
     public void testShortestPathAlgorithms() {
-    	testShortestPathAlgorithm(Algorithm.DIJKSTRA);
     	testShortestPathAlgorithm(Algorithm.ASTAR);
+    	testShortestPathAlgorithm(Algorithm.DIJKSTRA);
+
     }
 
     public ShortestPathAlgorithm getShortestPathAlgorithm(Algorithm algo, ShortestPathData data) {
