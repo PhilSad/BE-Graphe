@@ -8,25 +8,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.insa.algo.AbstractInputData.Mode;
 import org.insa.algo.ArcInspector;
 import org.insa.algo.ArcInspectorFactory;
 import org.insa.algo.ArcInspectorFactory.TypeFiltre;
-import org.insa.algo.shortestpath.AStarAlgorithm;
 import org.insa.algo.shortestpath.BellmanFordAlgorithm;
 import org.insa.algo.shortestpath.DijkstraAlgorithm;
-import org.insa.algo.shortestpath.ShortestPathAlgorithm;
 import org.insa.algo.shortestpath.ShortestPathData;
 import org.insa.algo.shortestpath.ShortestPathSolution;
 import org.insa.graph.RoadInformation.RoadType;
 import org.insa.graph.io.BinaryGraphReader;
 import org.insa.graph.io.GraphReader;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 public class ShortestPathTest {
 	
@@ -85,15 +84,13 @@ public class ShortestPathTest {
         
         //Construction des scénarios de test
         
-        String[] maps = {"haute-garonne", "french-polynesia", "carre"};
-        
         Node [] origines;
         Node [] destinations;
         
         scenarios = new HashMap<>();
         
         String basePath = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/";
-        List<String> graphPaths = Arrays.asList(maps);
+        String[] graphPaths = {"haute-garonne", "french-polynesia", "carre" };
         
         List<Graph> graphs = new ArrayList<>();
         GraphReader reader;
@@ -105,31 +102,13 @@ public class ShortestPathTest {
         	graphs.add(reader.read());
         }
         
-        
-        
-        
-        
         for(Graph g : graphs ) {
         	scenarios.put(g, new ArrayList<>());
         }
         
-        Graph g;
-        
-        g = graphs.get(graphPaths.indexOf("haute-garonne"));
-        scenarios.get(g).add(new Paire<Node, Node>(g.get(10991), g.get(89149)) );// INSA -> Aeroport
-        
-        g = graphs.get(graphPaths.indexOf("french-polynesia"));
-        scenarios.get(g).add(new Paire<Node, Node>(g.get(8654), g.get(9444)) ); // Ile 1 -> Ile 2 (inexistant)
-        
-        g = graphs.get(graphPaths.indexOf("carre"));
-        scenarios.get(g).add(new Paire<Node, Node>(g.get(9), g.get(9)) ); // Carré coin -> coin (null)
-        
-        
-        
-        
-        
-        
-        
+        scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
+        scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
+        scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
         
         
         // INSPECTORS
@@ -140,24 +119,11 @@ public class ShortestPathTest {
         
     
     }
+
+    
     
     @Test
-    public void testShortestPathAlgorithms() {
-    	testShortestPathAlgorithm(Algorithm.ASTAR);
-    	testShortestPathAlgorithm(Algorithm.DIJKSTRA);
-
-    }
-
-    public ShortestPathAlgorithm getShortestPathAlgorithm(Algorithm algo, ShortestPathData data) {
-    	switch(algo) {
-	    	case BELLMAN : return new BellmanFordAlgorithm(data);
-			case ASTAR : return new AStarAlgorithm(data);
-			case DIJKSTRA : return new DijkstraAlgorithm(data);
-			default : return null;
-    	}
-    }
-    
-    public void testShortestPathAlgorithm(Algorithm algo) {
+    public void testDixtra() {
 
         for(Graph g : scenarios.keySet() ) {
         	
@@ -172,10 +138,10 @@ public class ShortestPathTest {
         			ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(filtre.ordinal());
         			    				
     				ShortestPathData data = new ShortestPathData(g, p.a, p.b, arcInspector);
-    				ShortestPathAlgorithm SPAlgo = getShortestPathAlgorithm(algo, data);
+    				DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(data);
     				BellmanFordAlgorithm bellmanford = new BellmanFordAlgorithm(data);
     				
-    				ShortestPathSolution solDijkstra = SPAlgo.run();
+    				ShortestPathSolution solDijkstra = dijkstra.run();
     				ShortestPathSolution solBellmanford = bellmanford.run();
     				Path pathDijkstra = solDijkstra.getPath();
     				Path pathBellmanford = solBellmanford.getPath();
@@ -261,7 +227,7 @@ public class ShortestPathTest {
 		
 	}
 
-	/*
+	
 	@Test
 	public void testValidechemin() {
 		// Pour chaque combinaisons
@@ -295,7 +261,6 @@ public class ShortestPathTest {
 		}
 		
 	}
-	 */
 	
 	
 	
