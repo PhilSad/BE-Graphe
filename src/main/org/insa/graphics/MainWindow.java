@@ -272,19 +272,19 @@ public class MainWindow extends JFrame {
                 PackageSwitchData data = new PackageSwitchData(graph, evt.getNodes().get(0),
                         evt.getNodes().get(1), evt.getNodes().get(2), evt.getNodes().get(3), evt.getArcFilter());
 
-                PackageSwitchAlgorithm psAlgorithm = new PackageSwitchAlgorithm(data);
-//                try {
-//                	psAlgorithm = (PackageSwitchAlgorithm) AlgorithmFactory
-//                            .createAlgorithm(evt.getAlgorithmClass(), data);
-//                }
-//                catch (Exception e1) {
-//                    JOptionPane.showMessageDialog(MainWindow.this,
-//                            "An error occurred while creating the specified algorithm.",
-//                            "Internal error: Algorithm instantiation failure",
-//                            JOptionPane.ERROR_MESSAGE);
-//                    e1.printStackTrace();
-//                    return;
-//                }
+                PackageSwitchAlgorithm psAlgorithm;
+                try {
+                	psAlgorithm = (PackageSwitchAlgorithm) AlgorithmFactory
+                            .createAlgorithm(evt.getAlgorithmClass(), data);
+                }
+                catch (Exception e1) {
+                    JOptionPane.showMessageDialog(MainWindow.this,
+                            "An error occurred while creating the specified algorithm.",
+                            "Internal error: Algorithm instantiation failure",
+                            JOptionPane.ERROR_MESSAGE);
+                    e1.printStackTrace();
+                    return;
+                }
 
                 psPanel.setEnabled(false);
 

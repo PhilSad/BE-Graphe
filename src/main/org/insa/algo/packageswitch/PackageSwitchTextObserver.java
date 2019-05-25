@@ -19,7 +19,7 @@ public class PackageSwitchTextObserver implements PackageSwitchObserver {
     }
 
     @Override
-    public void notifyNodeReached(Node node) {
+    public void notifyNodeReached(Node node, Integer color) {
         stream.println("Node " + node.getId() + " reached.");
     }
 

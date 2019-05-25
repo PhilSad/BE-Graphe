@@ -15,8 +15,9 @@ public interface PackageSwitchObserver {
 	 * time.
 	 * 
 	 * @param node Node that has been reached.
+	 * @param nbMarked 
 	 */
-	public void notifyNodeReached(Node node);
+	public void notifyNodeReached(Node node, Integer nbMarked);
 	
 	/**
 	 * Notify the observer that a node has been marked, i.e. its final

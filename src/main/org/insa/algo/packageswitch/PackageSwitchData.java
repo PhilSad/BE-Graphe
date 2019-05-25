@@ -36,5 +36,9 @@ public class PackageSwitchData extends AbstractInputData {
 	public List<Node> getNodes() {
 		return this.nodes;
 	}
+	
+	public ArcInspector getArcInspector() {
+		return this.arcInspector;
+	}
 
 }
