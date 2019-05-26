@@ -14,9 +14,9 @@ import org.insa.graph.Node;
 import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
-
-	/* cout du chemin le plus court */
-	public Double cost = null;
+	
+	private HashMap<Integer,Label> labels;
+	private BinaryHeap<Label> tas;
 	
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
@@ -25,106 +25,127 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public Label createLabel(Node current, ShortestPathData data) {
     	return new Label(current);
     }
-
-    @Override
-    protected ShortestPathSolution doRun() {
+    
+    public void init() {
     	/* Declaration des variables */
         ShortestPathData data = getInputData();
-        ShortestPathSolution solution = null;    
-        BinaryHeap<Label> tas = new BinaryHeap<Label>();
-    	HashMap<Integer,Label> lablels = new HashMap<Integer, Label>();        
+        this.tas = new BinaryHeap<Label>();      
         Node origin = data.getOrigin();
-        Node destination = data.getDestination();
-        boolean fin = false;
+        this.labels = new HashMap<Integer, Label>();
         
         /* On ajoute le sommet de départ dans le tas */
         Label labelOrigin = createLabel(origin, data);
-        lablels.put(origin.getId(), labelOrigin);
+        this.labels.put(origin.getId(), labelOrigin);
         labelOrigin.setCost(0.0);
-        tas.insert(labelOrigin);
+        this.tas.insert(labelOrigin);
 
         notifyOriginProcessed(origin); // notify origin processed
-        
-        /* Algorithme de Dijkstra */
-        while(!tas.isEmpty() && !fin) {
-        	Label x = tas.deleteMin();
-        	x.setMarque(true);
-        	
-        	notifyNodeMarked(x.getSommetCourant()); // notify node marked
-        	
-        	for(Arc a : x.getSommetCourant().getSuccessors()) {
-        		
-        		// on verifie que la route est empruntable
-                if (!data.isAllowed(a))
-                	continue;
-        		
-                // on recupere le label si il existe, sinon on le crée
-                Label y = lablels.get(a.getDestination().getId());
-                if(y == null) {
-                	y = createLabel(a.getDestination(), data);
-                	lablels.put(a.getDestination().getId(), y);
-                }
-                
-        		if(!y.isMarque()) {
-        			Double newCost = Math.min(y.getCost(), x.getCost() + data.getCost(a));
-        			
-        			if(newCost < y.getCost()) {           				
-    					// rajoute dans le tas si on n'a pas encore touché sa valeur
-        				if(y.getCost() == Double.MAX_VALUE) {
-        					tas.insert(y);
-        					notifyNodeReached(y.getSommetCourant()); // notify node reached
-        				}
+    }    
+    
+    public Node step() {
+    	Label x = this.tas.deleteMin();
+    	x.setMarque(true);
+    	
+    	notifyNodeMarked(x.getSommetCourant()); // notify node marked
+    	
+    	for(Arc a : x.getSommetCourant().getSuccessors()) {
+    		
+    		// on verifie que la route est empruntable
+            if (!this.data.isAllowed(a))
+            	continue;
+    		
+            // on recupere le label si il existe, sinon on le crée
+            Label y = this.labels.get(a.getDestination().getId());
+            if(y == null) {
+            	y = createLabel(a.getDestination(), this.getInputData());
+            	this.labels.put(a.getDestination().getId(), y);
+            }
+            
+    		if(!y.isMarque()) {
+    			Double newCost = Math.min(y.getCost(), x.getCost() + this.data.getCost(a));
+    			
+    			if(newCost < y.getCost()) {           				
+					// rajoute dans le tas si on n'a pas encore touché sa valeur
+    				if(y.getCost() == Double.MAX_VALUE) {
+    					this.tas.insert(y);
+    					notifyNodeReached(y.getSommetCourant()); // notify node reached
+    				}
 
-        				tas.remove(y);
-        				
-        				y.setCost(newCost);
-        				y.setPere(x.getSommetCourant());
-        				
-        				//on supprime et rajoute le label pour mettre à jour sa position
-        				tas.insert(y);
-        			}        			
-        		}
-        	}
-        	
-        	if(lablels.get(destination.getId()) != null)
-        		fin = lablels.get(destination.getId()).isMarque();
-        }
+    				this.tas.remove(y);
+    				
+    				y.setCost(newCost);
+    				y.setPere(x.getSommetCourant());
+    				
+    				//on supprime et rajoute le label pour mettre à jour sa position
+    				this.tas.insert(y);
+    			}        			
+    		}
+    	}
+    	
+    	return x.getSommetCourant();
+    }
+    
+    public boolean isOver() {
+    	boolean destinationReached = false;
+    	Node destination = this.getInputData().getDestination();
+    	if(labels.get(destination.getId()) != null)
+    		destinationReached = this.labels.get(destination.getId()).isMarque();
+    	
+    	return tas.isEmpty() || destinationReached;
+    }
+    
+    public Path buildPath(Node destination) {
+        ShortestPathData data = getInputData();
+        Node origin = data.getOrigin();
         
-        /* Crée le path*/        
-        
-        Label curLabel = lablels.get(destination.getId());
+        Label curLabel = this.labels.get(destination.getId());
         if(curLabel == null) {
-        	curLabel = createLabel(destination, data);
+        	curLabel = this.createLabel(destination, data);
         }
         
         if(curLabel.getPere() == null) {
-        	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
-        } else {
-            /* cout vers la destination */
-            this.cost = lablels.get(destination.getId()).getCost();
-            
+        	return null;
+        } else {            
         	notifyDestinationReached(data.getDestination()); // notify destination reached
         	
         	List<Node> pathNodes = new ArrayList<Node>();        
         	do {
         		pathNodes.add(curLabel.getSommetCourant());
-        		curLabel = lablels.get(curLabel.getPere().getId());
+        		curLabel = this.labels.get(curLabel.getPere().getId());
         	}while(!curLabel.getSommetCourant().equals(origin));
         	
         	pathNodes.add(origin);
         	Collections.reverse(pathNodes);
         	
-        	Path path = Path.createShortestPathFromNodes(data.getGraph(), pathNodes);
-        	
-        	solution = new ShortestPathSolution(data, Status.FEASIBLE, path);
+        	return Path.createShortestPathFromNodes(data.getGraph(), pathNodes);
        }
+    }
+
+    @Override
+    protected ShortestPathSolution doRun() {
+       	/* Initialisation de l'algorithme*/
+    	init();
+    	
+        /* Algorithme de Dijkstra */
+        do {
+        	this.step();
+        }while(!isOver());
         
+        Path path = buildPath(this.getInputData().getDestination());
         
-        return solution;
+        if(path != null)
+        	return new ShortestPathSolution(this.getInputData(), Status.OPTIMAL, path);
+        else
+        	return new ShortestPathSolution(this.getInputData(), Status.INFEASIBLE);
     }
     
-    public double getCost() {
-    	return cost;
+    public BinaryHeap<Label> getTas() {
+    	return this.tas;
     }
+
+	public HashMap<Integer, Label> getLabels() {
+		return this.labels;
+	}
+    
 
 }
