@@ -14,10 +14,10 @@ public class PackageSwitchGraphicObserver implements PackageSwitchObserver {
 	
 	public PackageSwitchGraphicObserver(Drawing drawing) {
 		this.drawing = drawing;
-		psOverlay1 = drawing.createPointSetOverlay(1, Color.CYAN);
-		psOverlay2 = drawing.createPointSetOverlay(1, Color.BLUE);
-		psOverlay3 = drawing.createPointSetOverlay(1, Color.RED);
-		psOverlay4 = drawing.createPointSetOverlay(1, Color.GREEN);
+		psOverlay1 = drawing.createPointSetOverlay(1, new Color(0,0,125));
+		psOverlay2 = drawing.createPointSetOverlay(1, new Color(0,0,190));
+		psOverlay3 = drawing.createPointSetOverlay(1, new Color(0,0,255));
+		psOverlay4 = drawing.createPointSetOverlay(1, new Color(0,0,255));
 		
 		this.overlays = Arrays.asList(psOverlay1, psOverlay2, psOverlay3, psOverlay4);
 	}

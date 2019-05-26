@@ -49,8 +49,8 @@ import org.insa.algo.carpooling.CarPoolingAlgorithm;
 import org.insa.algo.packageswitch.PackageSwitchAlgorithm;
 import org.insa.algo.packageswitch.PackageSwitchData;
 import org.insa.algo.packageswitch.PackageSwitchGraphicObserver;
-import org.insa.algo.packageswitch.PackageSwitchSolution;
 import org.insa.algo.packageswitch.PackageSwitchTextObserver;
+import org.insa.algo.packageswitch.solution.PackageSwitchSolution;
 import org.insa.algo.shortestpath.ShortestPathAlgorithm;
 import org.insa.algo.shortestpath.ShortestPathData;
 import org.insa.algo.shortestpath.ShortestPathGraphicObserver;
@@ -303,15 +303,15 @@ public class MainWindow extends JFrame {
                         PackageSwitchSolution solution = copyAlgorithm.run();
                         // Add the solution to the solution panel (but do not display
                         // overlay).
-                        spPanel.solutionPanel.addSolution(solution, false);
+                        psPanel.solutionPanel.addSolution(solution, false);
                         // If the solution is feasible, add the paths to the path panel.
                         if (solution.isFeasible()) {
                         	for(Path path : solution.getPaths())
                         		pathPanel.addPath(path);
                         }
                         // Show the solution panel and enable the shortest-path panel.
-                        spPanel.solutionPanel.setVisible(true);
-                        spPanel.setEnabled(true);
+                        psPanel.solutionPanel.setVisible(true);
+                        psPanel.setEnabled(true);
                     }
                 });
             }

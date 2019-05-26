@@ -1,9 +1,10 @@
-package org.insa.algo.packageswitch;
+package org.insa.algo.packageswitch.solution;
 
 import java.util.List;
 
 import org.insa.algo.AbstractSolution;
 import org.insa.algo.AbstractSolution.Status;
+import org.insa.algo.packageswitch.PackageSwitchData;
 import org.insa.algo.shortestpath.ShortestPathData;
 import org.insa.graph.Path;
 

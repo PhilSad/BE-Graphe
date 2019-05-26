@@ -20,16 +20,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
-        
-    	/* Initialisation de l'algorithme*/
-    	init();
     }
     
     public Label createLabel(Node current, ShortestPathData data) {
     	return new Label(current);
     }
     
-    private void init() {
+    public void init() {
     	/* Declaration des variables */
         ShortestPathData data = getInputData();
         this.tas = new BinaryHeap<Label>();      
@@ -38,15 +35,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         /* On ajoute le sommet de départ dans le tas */
         Label labelOrigin = createLabel(origin, data);
-        labels.put(origin.getId(), labelOrigin);
+        this.labels.put(origin.getId(), labelOrigin);
         labelOrigin.setCost(0.0);
-        tas.insert(labelOrigin);
+        this.tas.insert(labelOrigin);
 
         notifyOriginProcessed(origin); // notify origin processed
     }    
     
     public Node step() {
-    	Label x = tas.deleteMin();
+    	Label x = this.tas.deleteMin();
     	x.setMarque(true);
     	
     	notifyNodeMarked(x.getSommetCourant()); // notify node marked
@@ -54,33 +51,33 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	for(Arc a : x.getSommetCourant().getSuccessors()) {
     		
     		// on verifie que la route est empruntable
-            if (!data.isAllowed(a))
+            if (!this.data.isAllowed(a))
             	continue;
     		
             // on recupere le label si il existe, sinon on le crée
-            Label y = labels.get(a.getDestination().getId());
+            Label y = this.labels.get(a.getDestination().getId());
             if(y == null) {
             	y = createLabel(a.getDestination(), this.getInputData());
-            	labels.put(a.getDestination().getId(), y);
+            	this.labels.put(a.getDestination().getId(), y);
             }
             
     		if(!y.isMarque()) {
-    			Double newCost = Math.min(y.getCost(), x.getCost() + data.getCost(a));
+    			Double newCost = Math.min(y.getCost(), x.getCost() + this.data.getCost(a));
     			
     			if(newCost < y.getCost()) {           				
 					// rajoute dans le tas si on n'a pas encore touché sa valeur
     				if(y.getCost() == Double.MAX_VALUE) {
-    					tas.insert(y);
+    					this.tas.insert(y);
     					notifyNodeReached(y.getSommetCourant()); // notify node reached
     				}
 
-    				tas.remove(y);
+    				this.tas.remove(y);
     				
     				y.setCost(newCost);
     				y.setPere(x.getSommetCourant());
     				
     				//on supprime et rajoute le label pour mettre à jour sa position
-    				tas.insert(y);
+    				this.tas.insert(y);
     			}        			
     		}
     	}
@@ -92,7 +89,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	boolean destinationReached = false;
     	Node destination = this.getInputData().getDestination();
     	if(labels.get(destination.getId()) != null)
-    		destinationReached = labels.get(destination.getId()).isMarque();
+    		destinationReached = this.labels.get(destination.getId()).isMarque();
     	
     	return tas.isEmpty() || destinationReached;
     }
@@ -101,7 +98,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         ShortestPathData data = getInputData();
         Node origin = data.getOrigin();
         
-        Label curLabel = labels.get(destination.getId());
+        Label curLabel = this.labels.get(destination.getId());
         if(curLabel == null) {
         	curLabel = this.createLabel(destination, data);
         }
@@ -114,7 +111,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	List<Node> pathNodes = new ArrayList<Node>();        
         	do {
         		pathNodes.add(curLabel.getSommetCourant());
-        		curLabel = labels.get(curLabel.getPere().getId());
+        		curLabel = this.labels.get(curLabel.getPere().getId());
         	}while(!curLabel.getSommetCourant().equals(origin));
         	
         	pathNodes.add(origin);
@@ -125,7 +122,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     }
 
     @Override
-    protected ShortestPathSolution doRun() {    	
+    protected ShortestPathSolution doRun() {
+       	/* Initialisation de l'algorithme*/
+    	init();
+    	
         /* Algorithme de Dijkstra */
         do {
         	this.step();
@@ -142,6 +142,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public BinaryHeap<Label> getTas() {
     	return this.tas;
     }
+
+	public HashMap<Integer, Label> getLabels() {
+		return this.labels;
+	}
     
 
 }

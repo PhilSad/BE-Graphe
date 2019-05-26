@@ -1,6 +1,7 @@
 package org.insa.algo.packageswitch;
 
 import org.insa.algo.AbstractAlgorithm;
+import org.insa.algo.packageswitch.solution.PackageSwitchSolution;
 import org.insa.graph.Node;
 
 public abstract class PackageSwitchAlgorithm extends AbstractAlgorithm<PackageSwitchObserver> {
