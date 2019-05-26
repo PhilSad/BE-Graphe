@@ -18,7 +18,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	private HashMap<Integer,Label> labels;
 	private BinaryHeap<Label> tas;
 	
-    public DijkstraAlgorithm(ShortestPathData data) {
+	private Double cost;
+    
+	public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
     
@@ -133,10 +135,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Path path = buildPath(this.getInputData().getDestination());
         
-        if(path != null)
+        if(path != null) {
+        	this.cost = this.labels.get(this.getInputData().getDestination().getId()).getCost();
         	return new ShortestPathSolution(this.getInputData(), Status.OPTIMAL, path);
-        else
+        } else {
         	return new ShortestPathSolution(this.getInputData(), Status.INFEASIBLE);
+        }
     }
     
     public BinaryHeap<Label> getTas() {
@@ -147,5 +151,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		return this.labels;
 	}
     
+	public Double getCost() {
+		return this.cost;
+	}
 
 }
