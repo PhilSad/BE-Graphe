@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.insa.algo.packageswitch.PackageSwitchAlgorithm;
+import org.insa.algo.packageswitch.solution.PackageSwitchSolutionAStar;
+import org.insa.algo.packageswitch.solution.PackageSwitchSolutionBruteForce;
+import org.insa.algo.packageswitch.solution.PackageSwitchSolutionDijkstra;
 import org.insa.algo.shortestpath.AStarAlgorithm;
 import org.insa.algo.shortestpath.BellmanFordAlgorithm;
 import org.insa.algo.shortestpath.DijkstraAlgorithm;
@@ -36,6 +40,9 @@ public class AlgorithmFactory {
         // Register your algorithms here:
         // registerAlgorithm(CarPoolingAlgorithm.class, "My Awesome Algorithm",
         // MyCarPoolingAlgorithm.class);
+        registerAlgorithm(PackageSwitchAlgorithm.class, "Package Switch Dijkstra", PackageSwitchSolutionDijkstra.class);
+        registerAlgorithm(PackageSwitchAlgorithm.class, "Package Switch A*", PackageSwitchSolutionAStar.class);
+        registerAlgorithm(PackageSwitchAlgorithm.class, "Package Switch Brute Force", PackageSwitchSolutionBruteForce.class);
     }
 
     /**
