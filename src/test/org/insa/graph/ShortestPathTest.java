@@ -16,6 +16,7 @@ import org.insa.algo.AbstractInputData.Mode;
 import org.insa.algo.ArcInspector;
 import org.insa.algo.ArcInspectorFactory;
 import org.insa.algo.ArcInspectorFactory.TypeFiltre;
+import org.insa.algo.shortestpath.AStarAlgorithm;
 import org.insa.algo.shortestpath.BellmanFordAlgorithm;
 import org.insa.algo.shortestpath.DijkstraAlgorithm;
 import org.insa.algo.shortestpath.ShortestPathData;
@@ -109,15 +110,9 @@ public class ShortestPathTest {
         scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
         scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
         scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
-        scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(1840), graphs.get(3).get(3492)) ); // Bruxelle -> Namur )
+        scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(1840), graphs.get(3).get(3492)) ); // je sais plus
         scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(15626), graphs.get(3).get(11286)) ); // Rangueille -> Jean Jores)
         
-        
-        // INSPECTORS
-        
-        
-        
-        // Application de dixtra
         
     
     }
@@ -136,18 +131,61 @@ public class ShortestPathTest {
         		
         		for(TypeFiltre filtre : TypeFiltre.values()) {
         			System.out.println("\t\t Filtre :" + filtre);
-        			
+    				
+        			long tDebut, tFin;
+
         			ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(filtre.ordinal());
         			    				
     				ShortestPathData data = new ShortestPathData(g, p.a, p.b, arcInspector);
     				DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(data);
     				BellmanFordAlgorithm bellmanford = new BellmanFordAlgorithm(data);
     				
+    				tDebut = System.currentTimeMillis();
     				ShortestPathSolution solDijkstra = dijkstra.run();
-    				ShortestPathSolution solBellmanford = bellmanford.run();
+    				tFin = System.currentTimeMillis();
+    					
     				Path pathDijkstra = solDijkstra.getPath();
-    				Path pathBellmanford = solBellmanford.getPath();
     				
+    				double dureeParcour, distanceParcour;
+    				
+    				if(pathDijkstra == null) {
+    					dureeParcour = 0;
+    					distanceParcour = 0;
+    				}
+    				else {
+    					dureeParcour = solDijkstra.getPath().getLength();
+    					distanceParcour = solDijkstra.getPath().getMinimumTravelTime();
+    				}
+    				
+    				
+    				ShoretestPathPerfTest.ecrireResultat(g.getMapName(), "Dijkstra",filtre, p.a.getId(), p.b.getId(), distanceParcour, dureeParcour, tFin - tDebut);
+
+    				
+    				tDebut = System.currentTimeMillis();
+    				ShortestPathSolution solBellmanford = bellmanford.run();
+    				tFin = System.currentTimeMillis();
+    				
+    				
+    				Path pathBellmanford = solBellmanford.getPath();
+
+    				
+    				
+    				if(pathBellmanford == null) {
+    					dureeParcour = 0;
+    					distanceParcour = 0;
+    				}
+    				else {
+    					dureeParcour = solBellmanford.getPath().getLength();
+    					distanceParcour = solBellmanford.getPath().getMinimumTravelTime();
+    				}
+    				
+
+    				
+    				
+    				ShoretestPathPerfTest.ecrireResultat(g.getMapName(), "Bellman",filtre, p.a.getId(), p.b.getId(), distanceParcour,	dureeParcour, tFin - tDebut);
+
+    				
+
     				if(pathDijkstra == null && pathBellmanford == null) {
     					System.out.println("0");
     					assertNull(pathBellmanford);
@@ -157,6 +195,96 @@ public class ShortestPathTest {
     					System.out.println(pathDijkstra.getLength() );
     					System.out.println(pathBellmanford.getLength());
     					assertEquals(pathDijkstra.getLength(), pathBellmanford.getLength(), 0.01f);
+    				}   			
+        			
+        		}
+        		
+        		System.out.println("Scénario suivant");
+        		
+        	}
+        }
+    }
+    
+    
+    
+    
+    @Test
+    public void testAStar() {
+
+        for(Graph g : scenarios.keySet() ) {
+        	
+        	System.out.println("Carte : " + g.getMapName());
+        	 
+        	for(Paire<Node, Node> p : scenarios.get(g)) {
+        		System.out.println("\tfrom : " + p.a.getId() + " to : " + p.b.getId());
+        		
+        		for(TypeFiltre filtre : TypeFiltre.values()) {
+        			System.out.println("\t\t Filtre :" + filtre);
+    				
+        			long tDebut, tFin;
+
+        			ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(filtre.ordinal());
+        			    				
+    				ShortestPathData data = new ShortestPathData(g, p.a, p.b, arcInspector);
+    				DijkstraAlgorithm astar = new AStarAlgorithm(data);
+    				BellmanFordAlgorithm bellmanford = new BellmanFordAlgorithm(data);
+    				
+    				
+    				tDebut = System.currentTimeMillis();
+    				ShortestPathSolution solAstar = astar.run();
+    				tFin = System.currentTimeMillis();
+    					
+    				Path pathAStar = solAstar.getPath();
+    				
+    				double dureeParcour, distanceParcour;
+    				
+    				if(pathAStar == null) {
+    					dureeParcour = 0;
+    					distanceParcour = 0;
+    				}
+    				else {
+    					dureeParcour = solAstar.getPath().getLength();
+    					distanceParcour = solAstar.getPath().getMinimumTravelTime();
+    				}
+    				
+    				
+    				ShoretestPathPerfTest.ecrireResultat(g.getMapName(), "AStar",filtre, p.a.getId(), p.b.getId(), distanceParcour, dureeParcour, tFin - tDebut);
+
+    				
+    				tDebut = System.currentTimeMillis();
+    				ShortestPathSolution solBellmanford = bellmanford.run();
+    				tFin = System.currentTimeMillis();
+    				
+    				
+    				Path pathBellmanford = solBellmanford.getPath();
+
+    				
+    				
+    				if(pathBellmanford == null) {
+    					dureeParcour = 0;
+    					distanceParcour = 0;
+    				}
+    				else {
+    					dureeParcour = solBellmanford.getPath().getLength();
+    					distanceParcour = solBellmanford.getPath().getMinimumTravelTime();
+    				}
+    				
+
+    				
+    				
+    				ShoretestPathPerfTest.ecrireResultat(g.getMapName(), "Bellman",filtre, p.a.getId(), p.b.getId(), distanceParcour,	dureeParcour, tFin - tDebut);
+
+    				
+
+    				if(pathAStar == null && pathBellmanford == null) {
+    					System.out.println("0");
+    					assertNull(pathBellmanford);
+    					assertNull(pathAStar);
+
+    				} else {
+    					System.out.println(pathAStar.getLength() );
+    					System.out.println(pathBellmanford.getLength());
+    					assertEquals(pathAStar.getLength(), pathBellmanford.getLength(), 0.01f);
     				}   			
         			
         		}

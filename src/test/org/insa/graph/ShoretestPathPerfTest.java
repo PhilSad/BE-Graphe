@@ -89,7 +89,7 @@ public class ShoretestPathPerfTest {
     	return somme / tab.length;
     }
     
-    private static void ecrireResultat(String map, String algo, TypeFiltre filtre, int orig, 
+    public static void ecrireResultat(String map, String algo, TypeFiltre filtre, int orig, 
     		int dest, double distance, double duree, long temps) {
     	
     	try {
