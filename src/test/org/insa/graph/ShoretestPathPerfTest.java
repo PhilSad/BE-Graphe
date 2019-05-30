@@ -1,10 +1,12 @@
 package org.insa.graph;
 
 import static org.junit.Assert.*;
-
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,12 +51,11 @@ public class ShoretestPathPerfTest {
         scenarios = new HashMap<>();
         
         String basePath = "/home/phil/Téléchargements/";
-        String[] graphPaths = {"haute-garonne", "french-polynesia", "carre", "toulouse"};
+        String[] graphPaths = {"carre-dense"};
         
         List<Graph> graphs = new ArrayList<>();
         GraphReader reader;
         for(String path : graphPaths) {
-        	//System.out.println(basePath + path + ".mapgr");
         	reader = new BinaryGraphReader(
                     new DataInputStream(new BufferedInputStream(new FileInputStream(basePath + path + ".mapgr"))));
         	
@@ -65,9 +66,9 @@ public class ShoretestPathPerfTest {
         	scenarios.put(g, new ArrayList<>());
         }
         
-        scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
-        scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
-        scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
+        scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(341598), graphs.get(0).get(304768)) );// INSA -> Aeroport
+        //scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
+        //scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
         
         
         // INSPECTORS
@@ -80,10 +81,42 @@ public class ShoretestPathPerfTest {
     }
 
     
+    private long moyenneTab(long [] tab) {
+    	long somme = 0;
+    	for(long e : tab) {
+    		somme += e;
+    	}
+    	return somme / tab.length;
+    }
+    
+    private static void ecrireResultat(String map, String algo, TypeFiltre filtre, int orig, 
+    		int dest, double distance, double duree, long temps) {
+    	
+    	try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("./out.txt", true));
+			
+			String content = map + ","+ algo + ","+ filtre + "," + orig + "," + dest +","+distance+","+ duree + "," + temps + "\n";
+			
+			writer.write(content);
+			
+			writer.close();
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    	
+    }
+    
+    
     
     @Test
     public void testPerfCompare() {
-
+    	
+    	
+    	
+    	
+    	
         for(Graph g : scenarios.keySet() ) {
         	
         	System.out.println("Carte : " + g.getMapName());
@@ -91,7 +124,7 @@ public class ShoretestPathPerfTest {
         	for(Paire<Node, Node> p : scenarios.get(g)) {
         		System.out.println("\tfrom : " + p.a.getId() + " to : " + p.b.getId());
         		
-        		for(TypeFiltre filtre : TypeFiltre.values()) {
+        			TypeFiltre filtre = TypeFiltre.values()[0];
         			System.out.println("\t\t Filtre :" + filtre);
         			
         			ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(filtre.ordinal());
@@ -105,137 +138,49 @@ public class ShoretestPathPerfTest {
     				long tDebut, tFin;
     				
     				for(int i = 0; i < 3; i++) {
-    				
+    					
+    					System.out.println("\t\t\tTest numero " + i);
+    					
 	    				AStarAlgorithm astar = new AStarAlgorithm(data);
 	    				DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(data);
 	    				BellmanFordAlgorithm bellmanford = new BellmanFordAlgorithm(data);
 	    				
 	    				tDebut = System.currentTimeMillis();
 	    				ShortestPathSolution solAStar = astar.run();
-	    				tFin = System.
+	    				tFin = System.currentTimeMillis();	    				
+	    				tempsAstar[i] = tFin - tDebut;
 	    				
+	    				
+	    				tDebut = System.currentTimeMillis();
 	    				ShortestPathSolution solDijkstra = dijkstra.run();
+	    				tFin = System.currentTimeMillis();    				
+	    				tempsDiskstra[i] = tFin - tDebut;
+	    				
+	    				tDebut = System.currentTimeMillis();
 	    				ShortestPathSolution solBellmanford = bellmanford.run();
-    				
+	    				tFin = System.currentTimeMillis();
+	    				
+	    				tempsBellman[i] = tFin - tDebut;
+	    				
+	    				ecrireResultat(g.getMapName(), "AStar",filtre, p.a.getId(), p.b.getId(), solAStar.getPath().getLength(), solAStar.getPath().getMinimumTravelTime(), tempsAstar[i]);
+	    				ecrireResultat(g.getMapName(), "Dijkstra",filtre, p.a.getId(), p.b.getId(), solDijkstra.getPath().getLength(), solDijkstra.getPath().getMinimumTravelTime(), tempsDiskstra[i]);
+	    				ecrireResultat(g.getMapName(), "Bellman", filtre, p.a.getId(), p.b.getId(), solBellmanford.getPath().getLength(), solBellmanford.getPath().getMinimumTravelTime(), tempsBellman[i]);
+	    				    				
     				}
     				
-    				Path pathDijkstra = solDijkstra.getPath();
-    				Path pathBellmanford = solBellmanford.getPath();
-    				
-    				if(pathDijkstra == null && pathBellmanford == null) {
-    					System.out.println("0");
-    					assertNull(pathBellmanford);
-    					assertNull(pathDijkstra);
-
-    				} else {
-    					System.out.println(pathDijkstra.getLength() );
-    					System.out.println(pathBellmanford.getLength());
-    					assertEquals(pathDijkstra.getLength(), pathBellmanford.getLength(), 0.01f);
-    				}   			
+    				System.out.println("\t\t\t\t  Temps Bellman " + moyenneTab(tempsBellman));
+    				System.out.println("\t\t\t\t  Temps Dijkstra " + moyenneTab(tempsDiskstra));
+    				System.out.println("\t\t\t\t  Temps Astar " + moyenneTab(tempsAstar));
+    				    				
+			
         			
-        		}
+        		
         		
         		System.out.println("Scénario suivant");
         		
         	}
         }
-    }
     
-
-	@Test
-	public void testTableauDistancier() {
-		
-		System.out.print("\t");
-		for(Node node : nodes)
-			System.out.print("   x" + node.getId() + "\t \t");
-		
-		System.out.println();
-		
-		for(Node origin : graph.getNodes()) {
-			System.out.print("x" + origin.getId() + "\t");
-			for(Node destination : graph.getNodes()) {
-				
-				if(origin.equals(destination)) {
-					System.out.print("   Ø\t\t");
-					continue;
-				}
-				
-				ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(ArcInspectorFactory.TypeFiltre.NOFILTER.ordinal());
-				
-				ShortestPathData data = new ShortestPathData(graph, origin, destination, arcInspector);
-				DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(data);
-				BellmanFordAlgorithm bellmanford = new BellmanFordAlgorithm(data);
-				
-				ShortestPathSolution solDijkstra = dijkstra.run();
-				ShortestPathSolution solBellmanford = bellmanford.run();
-				Path pathDijkstra = solDijkstra.getPath();
-				Path pathBellmanford = solBellmanford.getPath();
-				
-				if(pathDijkstra != null && pathBellmanford != null) {
-					assertEquals(pathDijkstra.getLength(), pathBellmanford.getLength(), 0.01f);
-					System.out.print(pathDijkstra.getLength() + ", (x" + pathDijkstra.getArcs().get(pathDijkstra.getArcs().size() - 1).getOrigin().getId() +") \t");
-				} else {
-					assertNull(pathBellmanford);
-					assertNull(pathDijkstra);
-					System.out.print("   Ø\t\t");
-				}
-				
-			}
-			System.out.println();
-		}
-	}
-	
-	@Test
-	public void testValiditeCarte() throws IOException {
-        String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
-        GraphReader reader = new BinaryGraphReader(
-                new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
-        Graph graph = reader.read();
-        
-        //metro rangueil
-        Node origin = graph.get(1114);
-        //metro fac de pharma
-        Node destination = graph.get(420);
-        
-		ArcInspector arcInspector = ArcInspectorFactory.getAllFilters().get(ArcInspectorFactory.TypeFiltre.NOFILTER.ordinal());
-        
-        ShortestPathData data = new ShortestPathData(graph, origin, destination, arcInspector);
-		
-	}
-
-	
-	@Test
-	public void testValidechemin() {
-		// Pour chaque combinaisons
-		
-		for (DijkstraAlgorithm algo : dijkstras) {
-			
-			ShortestPathSolution solution = algo.run();
-			
-			Path cheminSol = solution.getPath();
-			assertTrue(cheminSol.isValid());
-		}
-	}
-	
-
-	
-	@Test
-	public void testCoutValide() {
-		
-		for (DijkstraAlgorithm algo : dijkstras) {
-			
-			ShortestPathSolution solution = algo.run();
-			
-			if(solution.getInputData().getMode() == Mode.LENGTH) {
-				assertEquals(algo.getCost(), solution.getPath().getLength(), 0.1);
-
-			}
-			else if (solution.getInputData().getMode() == Mode.TIME) {
-				assertEquals(algo.getCost(), solution.getPath().getMinimumTravelTime(), 0.1);
-			}
-			
-		}
-		
 	}
 	
 	

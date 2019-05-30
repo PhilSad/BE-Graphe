@@ -89,8 +89,8 @@ public class ShortestPathTest {
         
         scenarios = new HashMap<>();
         
-        String basePath = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/";
-        String[] graphPaths = {"haute-garonne", "french-polynesia", "carre" };
+        String basePath = "/home/phil/Téléchargements/";
+        String[] graphPaths = {"haute-garonne", "french-polynesia", "carre", "toulouse"};
         
         List<Graph> graphs = new ArrayList<>();
         GraphReader reader;
@@ -109,6 +109,8 @@ public class ShortestPathTest {
         scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
         scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
         scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
+        scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(1840), graphs.get(3).get(3492)) ); // Bruxelle -> Namur )
+        scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(15626), graphs.get(3).get(11286)) ); // Rangueille -> Jean Jores)
         
         
         // INSPECTORS
