@@ -107,14 +107,21 @@ public class ShortestPathTest {
         	scenarios.put(g, new ArrayList<>());
         }
         
+        //chemins valide
         scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(10991), graphs.get(0).get(89149)) );// INSA -> Aeroport
-        scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
-        scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
         scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(1840), graphs.get(3).get(3492)) ); // je sais plus
         scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(15626), graphs.get(3).get(11286)) ); // Rangueille -> Jean Jores)
         
+        // chemins nuls
+        scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(0), graphs.get(0).get(0)) );
+        scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(0), graphs.get(1).get(0)) );
+        scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(0), graphs.get(2).get(0)) );
+        scenarios.get(graphs.get(3)).add(new Paire<Node, Node>(graphs.get(3).get(0), graphs.get(3).get(0)) ); 
         
-    
+        // non connexe
+        scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
+
+        
     }
 
     

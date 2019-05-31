@@ -13,7 +13,7 @@ import org.insa.graph.GraphStatistics;
 public class ArcInspectorFactory {
 	
 	public enum TypeFiltre {
-		NOFILTER, SHORTCARS, FASTALL, FASTCAR, FASTFOOT, SHORTFOOT
+		NOFILTER, SHORTCARS, FASTALL, FASTCAR, FASTFOOT
 	}
 
     /**
@@ -173,6 +173,7 @@ public class ArcInspectorFactory {
         });
         
         
+/*        
         // Non-private roads for pedestrian and bicycle:
         filters.add(new ArcInspector() {
 
@@ -205,7 +206,7 @@ public class ArcInspectorFactory {
             }
         });
 
-
+*/
         // Add your own filters here (do not forget to implement toString()
         // to get an understandable output!):
 

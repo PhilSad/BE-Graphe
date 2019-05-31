@@ -51,7 +51,7 @@ public class ShoretestPathPerfTest {
         scenarios = new HashMap<>();
         
         String basePath = "/home/phil/Téléchargements/";
-        String[] graphPaths = {"carre-dense"};
+        String[] graphPaths = {"fractal-spiral"};
         
         List<Graph> graphs = new ArrayList<>();
         GraphReader reader;
@@ -66,7 +66,7 @@ public class ShoretestPathPerfTest {
         	scenarios.put(g, new ArrayList<>());
         }
         
-        scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(341598), graphs.get(0).get(304768)) );// INSA -> Aeroport
+        scenarios.get(graphs.get(0)).add(new Paire<Node, Node>(graphs.get(0).get(206479), graphs.get(0).get(973097)) );// INSA -> Aeroport
         //scenarios.get(graphs.get(1)).add(new Paire<Node, Node>(graphs.get(1).get(8654), graphs.get(1).get(9444)) ); // Ile 1 -> Ile 2
         //scenarios.get(graphs.get(2)).add(new Paire<Node, Node>(graphs.get(2).get(9), graphs.get(2).get(9)) ); // Carré coin -> coin (null)
         
@@ -137,7 +137,7 @@ public class ShoretestPathPerfTest {
     				
     				long tDebut, tFin;
     				
-    				for(int i = 0; i < 3; i++) {
+    				for(int i = 0; i < 1; i++) {
     					
     					System.out.println("\t\t\tTest numero " + i);
     					
